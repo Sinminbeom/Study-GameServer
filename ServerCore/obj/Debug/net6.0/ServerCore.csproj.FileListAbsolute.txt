@@ -1,0 +1,15 @@
+D:\source\LocalSource\Server\ServerCore\bin\Debug\net6.0\ServerCore.exe
+D:\source\LocalSource\Server\ServerCore\bin\Debug\net6.0\ServerCore.deps.json
+D:\source\LocalSource\Server\ServerCore\bin\Debug\net6.0\ServerCore.runtimeconfig.json
+D:\source\LocalSource\Server\ServerCore\bin\Debug\net6.0\ServerCore.dll
+D:\source\LocalSource\Server\ServerCore\bin\Debug\net6.0\ServerCore.pdb
+D:\source\LocalSource\Server\ServerCore\obj\Debug\net6.0\ServerCore.csproj.AssemblyReference.cache
+D:\source\LocalSource\Server\ServerCore\obj\Debug\net6.0\ServerCore.GeneratedMSBuildEditorConfig.editorconfig
+D:\source\LocalSource\Server\ServerCore\obj\Debug\net6.0\ServerCore.AssemblyInfoInputs.cache
+D:\source\LocalSource\Server\ServerCore\obj\Debug\net6.0\ServerCore.AssemblyInfo.cs
+D:\source\LocalSource\Server\ServerCore\obj\Debug\net6.0\ServerCore.csproj.CoreCompileInputs.cache
+D:\source\LocalSource\Server\ServerCore\obj\Debug\net6.0\ServerCore.dll
+D:\source\LocalSource\Server\ServerCore\obj\Debug\net6.0\refint\ServerCore.dll
+D:\source\LocalSource\Server\ServerCore\obj\Debug\net6.0\ServerCore.pdb
+D:\source\LocalSource\Server\ServerCore\obj\Debug\net6.0\ServerCore.genruntimeconfig.cache
+D:\source\LocalSource\Server\ServerCore\obj\Debug\net6.0\ref\ServerCore.dll
