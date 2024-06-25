@@ -35,14 +35,12 @@ namespace ServerCore
             args.AcceptSocket = null;
 
             bool pending = _listenSocket.AcceptAsync(args);
-            Console.WriteLine(pending);
-            //if (pending == false)
-            //    OnAcceptCompleted(null, args);
+            if (pending == false)
+                OnAcceptCompleted(null, args);
         }
 
         void OnAcceptCompleted(Object sender, SocketAsyncEventArgs args)
         {
-            Console.WriteLine("fdfdfdfd");
             if (args.SocketError == SocketError.Success)
             {
                 _onAcceptHandler.Invoke(args.AcceptSocket);
