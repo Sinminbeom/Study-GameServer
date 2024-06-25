@@ -4,8 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ServerCore
+namespace ServerCore.example
 {
+    /*
     internal class ThreadLocalStorage
     {
         static ThreadLocal<string> threadName = new ThreadLocal<string>(() => { return $"My Name Is {Thread.CurrentThread.ManagedThreadId}"; });
@@ -36,4 +37,5 @@ namespace ServerCore
             threadName.Dispose();
         }
     }
+    */
 }

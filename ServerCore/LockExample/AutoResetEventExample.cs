@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ServerCore
+namespace ServerCore.example
 {
     /*
     class Lock

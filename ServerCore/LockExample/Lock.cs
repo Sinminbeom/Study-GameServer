@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ServerCore
+namespace ServerCore.example
 {
     // 재귀적 락을 허용할지 (No)
     // 스핀락 정책 (5000번 -> Yield)
@@ -21,7 +21,7 @@ namespace ServerCore
         public void WriteLock()
         {
             // 아무도 WriteLock or ReadLock을 획득하고 있지 않을 때, 경합해서 소유권을 얻는다.
-            int desired = (Thread.CurrentThread.ManagedThreadId << 16) & WRITE_MASK;
+            int desired = Thread.CurrentThread.ManagedThreadId << 16 & WRITE_MASK;
             while (true)
             {
                 for (int i = 0; i < MAX_SPIN_COUNT; i++)
@@ -47,12 +47,12 @@ namespace ServerCore
 
         public void ReadLock()
         {
-            while(true)
+            while (true)
             {
                 for (int i = 0; i < MAX_SPIN_COUNT; i++)
                 {
                     // 아무도 Wirte을 획득하고 있지 않으면 ReadCount를 1 늘린다.
-                    int expected = (_flag & READ_MASK);
+                    int expected = _flag & READ_MASK;
                     if (Interlocked.CompareExchange(ref _flag, expected + 1, expected) == expected)
                         return;
 

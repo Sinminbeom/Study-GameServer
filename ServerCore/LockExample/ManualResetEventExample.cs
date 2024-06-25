@@ -1,24 +1,37 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace ServerCore
+namespace ServerCore.example
 {
     /*
-    internal class MutexExample
+    class Lock
+    {
+        // bool <- 커널
+        ManualResetEvent _available = new ManualResetEvent(false);
+
+        public void Acquire()
+        {
+            _available.WaitOne(); // 입장시도
+            _available.Reset(); // 문을 닫는다.
+        }
+
+        public void Release()
+        {
+            _available.Set(); // flag = true
+
+        }
+    }
+    internal class ManualResetEventExample
     {
         static int _num = 0;
-        static Mutex _lock = new Mutex(); // 커널 동기화 객체
+        static Lock _lock = new Lock();
 
         static void Thread_1()
         {
             for (int i = 0; i < 100000; i++)
             {
-                _lock.WaitOne();
+                _lock.Acquire();
                 _num++;
-                _lock.ReleaseMutex();
+                _lock.Release();
             }
         }
 
@@ -26,9 +39,9 @@ namespace ServerCore
         {
             for (int i = 0; i < 100000; i++)
             {
-                _lock.WaitOne();
+                _lock.Acquire();
                 _num--;
-                _lock.ReleaseMutex();
+                _lock.Release();
             }
         }
 
