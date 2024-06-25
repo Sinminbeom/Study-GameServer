@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ServerCore
+namespace ServerCore.example
 {
     /*
     class SpinLock // 유저 동기화 객체
