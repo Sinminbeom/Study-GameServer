@@ -11,12 +11,10 @@ namespace ServerCoreTest
     public class Listener
     {
         Socket _listenSocket;
-        public void Init()
+        Action<Socket> _onAcceptHandler;
+        public void Init(IPEndPoint endPoint, Action<Socket> onAcceptHandler)
         {
-            string host = Dns.GetHostName();
-            IPHostEntry ipHost = Dns.GetHostEntry(host);
-            IPAddress ipAddr = ipHost.AddressList[0];
-            IPEndPoint endPoint = new IPEndPoint(ipAddr, 7777);
+            _onAcceptHandler += onAcceptHandler;
 
             _listenSocket = new Socket(endPoint.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
             _listenSocket.Bind(endPoint);
@@ -41,25 +39,11 @@ namespace ServerCoreTest
         {
             if (args.SocketError == SocketError.Success)
             {
-                Socket clientSocket = args.AcceptSocket as Socket;
-
-                if (clientSocket == null)
-                    return;
-
-                // 받아들이는걸 성공했으니 받아야지 Recv
-                byte[] _recvBuffer = new byte[1024];
-                int recvBytes = clientSocket.Receive(_recvBuffer);
-                string recvData = Encoding.UTF8.GetString(_recvBuffer);
-                Console.WriteLine($"[From Client] {recvData}");
-
-                byte[] _sendBuffer = Encoding.UTF8.GetBytes("Welcome Client!!!");
-                clientSocket.Send(_sendBuffer);
-
-                clientSocket.Shutdown(SocketShutdown.Both);
-                clientSocket.Close();
+                _onAcceptHandler.Invoke(args.AcceptSocket);
             }
             else
             {
+                Console.WriteLine("!!!!");
                 Console.WriteLine(SocketError.SocketError.ToString());
             }
 

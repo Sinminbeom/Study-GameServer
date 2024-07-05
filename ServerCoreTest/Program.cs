@@ -6,6 +6,36 @@ namespace ServerCoreTest
 {
     internal class Program
     {
+        static void OnAcceptHandler(Socket clientSocket)
+        {
+            try
+            {
+                Session session = new Session();
+                session.Start(clientSocket);
+
+                byte[] sendBuffer = Encoding.UTF8.GetBytes("Welcome to MMORPG Server");
+                session.Send(sendBuffer);
+
+                Thread.Sleep(1000);
+
+                session.Disconnect();
+
+                //byte[] recvBuffer = new byte[1024];
+                //int recvBytes = clientSocket.Receive(recvBuffer);
+                //string recvData = Encoding.UTF8.GetString(recvBuffer, 0, recvBytes);
+                //Console.WriteLine($"[From Cient] {recvData}");
+
+                //byte[] sendBuffer = Encoding.UTF8.GetBytes("Welcome Client!!!!");
+                //clientSocket.Send(sendBuffer);
+
+                //clientSocket.Shutdown(SocketShutdown.Both);
+                //clientSocket.Close();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+        }
         private static void Main(string[] args)
         {
 
@@ -16,7 +46,7 @@ namespace ServerCoreTest
             IPEndPoint endPoint = new IPEndPoint(ipAddr, 7777);
 
             Listener listener = new Listener();
-            listener.Init();
+            listener.Init(endPoint, OnAcceptHandler);
             while (true)
             {
 
