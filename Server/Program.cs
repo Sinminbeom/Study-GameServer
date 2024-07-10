@@ -29,7 +29,7 @@ namespace Server
         {
             string recvData = Encoding.UTF8.GetString(buffer.Array, buffer.Offset, buffer.Count);
             Console.WriteLine($"[From Client] {recvData}");
-            return 0;
+            return buffer.Count;
         }
 
         public override void OnSend(int numOfBytes)
