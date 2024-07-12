@@ -6,32 +6,27 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ServerCore
+namespace ServerCoreTest
 {
     public class Listener
     {
         Socket _listenSocket;
-        //Action<Socket> _onAcceptHandler;
         Func<Session> _sessionFactory;
-
         public void Init(IPEndPoint endPoint, Func<Session> sessionFactory)
         {
-            _listenSocket = new Socket(endPoint.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
             _sessionFactory += sessionFactory;
 
-            // 문지기 교육
+            _listenSocket = new Socket(endPoint.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
             _listenSocket.Bind(endPoint);
-
-            // 영업 시작
-            // backlog : 최대 대기수
             _listenSocket.Listen(10);
 
-            SocketAsyncEventArgs args = new SocketAsyncEventArgs();
-            args.Completed += new EventHandler<SocketAsyncEventArgs>(OnAcceptCompleted);
-            RegisterAccept(args);
+            SocketAsyncEventArgs _recvArgs = new SocketAsyncEventArgs();
+            _recvArgs.Completed += new EventHandler<SocketAsyncEventArgs>(OnAcceptCompleted);
+
+            RegisterAccept(_recvArgs);
         }
 
-        void RegisterAccept(SocketAsyncEventArgs args)
+        public void RegisterAccept(SocketAsyncEventArgs args)
         {
             args.AcceptSocket = null;
 
@@ -40,25 +35,20 @@ namespace ServerCore
                 OnAcceptCompleted(null, args);
         }
 
-        void OnAcceptCompleted(Object sender, SocketAsyncEventArgs args)
+        public void OnAcceptCompleted(object sender, SocketAsyncEventArgs args)
         {
             if (args.SocketError == SocketError.Success)
             {
                 Session session = _sessionFactory.Invoke();
                 session.Start(args.AcceptSocket);
-                session.OnConnected(args.AcceptSocket.RemoteEndPoint);
-                //_onAcceptHandler.Invoke(args.AcceptSocket);
+                session.OnConnect(args.AcceptSocket.RemoteEndPoint);
             }
             else
-                Console.WriteLine(args.SocketError.ToString());
+            {
+                Console.WriteLine(SocketError.SocketError.ToString());
+            }
 
             RegisterAccept(args);
-        }
-
-        public Socket Accept()
-        {
-            _listenSocket.AcceptAsync();
-            return _listenSocket.Accept();
         }
     }
 }

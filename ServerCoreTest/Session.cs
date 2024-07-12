@@ -6,108 +6,65 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ServerCore
+namespace ServerCoreTest
 {
-    public abstract class PacketSession : Session
-    {
-        int Header = 2;
-        public sealed override int OnRecv(ArraySegment<byte> buffer)
-        {
-            int processLen = 0;
-
-            while (true)
-            {
-                int size = BitConverter.ToUInt16(buffer.Array, 0);
-                int packetId = BitConverter.ToUInt16(buffer.Array, 2);
-
-                // 사이즈 헤더까지는 왔는지 확인
-                if (buffer.Count < Header)
-                    break;
-
-                // 사이즈만큼 왔는지 확인
-                if (buffer.Count < size)
-                    break;
-                
-                OnRecvPacket(new ArraySegment<byte>(buffer.Array, buffer.Offset + size, size));
-
-                processLen += size;
-
-                buffer = new ArraySegment<byte>(buffer.Array, buffer.Offset + size, buffer.Count - size);
-            }
-
-            return processLen;
-        }
-
-        public abstract int OnRecvPacket(ArraySegment<byte> buffer);
-    }
-    public abstract class Session
+    abstract public class Session
     {
         Socket _socket;
-        int _disconnected = 0;
-
-        RecvBuffer _recvBuffer = new RecvBuffer(1024);
-
-        Queue<ArraySegment<byte>> _sendQueue = new Queue<ArraySegment<byte>>();
-        object _lock = new object();
-        //bool _pending = false;
-
-        List<ArraySegment<byte>> _pendingList = new List<ArraySegment<byte>>();
-
+        int _disconnect;
         SocketAsyncEventArgs _sendArgs = new SocketAsyncEventArgs();
         SocketAsyncEventArgs _recvArgs = new SocketAsyncEventArgs();
 
-        public abstract void OnConnected(EndPoint endPoint);
+        Queue<byte[]> _sendQueue = new Queue<byte[]>();
+        object _lock = new object();
+
+        List<ArraySegment<byte>> _pendingList = new List<ArraySegment<byte>>();
+
+        RecvBuffer _recvBuffer = new RecvBuffer(1024);
+
+        public abstract void OnConnect(EndPoint endPoint);
         public abstract int OnRecv(ArraySegment<byte> buffer);
         public abstract void OnSend(int numOfBytes);
-        public abstract void OnDisconnected(EndPoint endPoint);
-
+        public abstract void OnDisconnect(EndPoint endPoint);
 
         public void Start(Socket socket)
         {
             _socket = socket;
-            _recvArgs.Completed += new EventHandler<SocketAsyncEventArgs>(OnRecvCompleted);
+
             _sendArgs.Completed += new EventHandler<SocketAsyncEventArgs>(OnSendCompleted);
+            _recvArgs.Completed += new EventHandler<SocketAsyncEventArgs>(OnRecvCompleted);
 
             RegisterRecv();
         }
 
-        public void Send(ArraySegment<byte> sendBuff)
+        public void Send(byte[] sendBuffer)
         {
             lock (_lock)
             {
-                _sendQueue.Enqueue(sendBuff);
+                _sendQueue.Enqueue(sendBuffer);
+
                 if (_pendingList.Count == 0)
                     RegisterSend();
-
-                //if (_pending == false)
-                //    RegisterSend();
             }
         }
 
         public void Disconnect()
         {
-            int orginal = Interlocked.Exchange(ref _disconnected, 1);
-            if (orginal == 1)
+            if (Interlocked.Exchange(ref _disconnect, 1) == 1)
                 return;
-
-            OnDisconnected(_socket.RemoteEndPoint);
+            OnDisconnect(_socket.RemoteEndPoint);
             _socket.Shutdown(SocketShutdown.Both);
             _socket.Close();
         }
 
-        #region 네트워크 통신
-        void RegisterSend()
+        public void RegisterSend()
         {
-            //_pending = true;
-            //byte[] buffer = _sendQueue.Dequeue();
-            //_sendArgs.SetBuffer(buffer, 0, buffer.Length);
-
-            //_pendingList.Clear();
             while (_sendQueue.Count > 0)
             {
-                ArraySegment<byte> buffer = _sendQueue.Dequeue();
-                _pendingList.Add(buffer);
+                byte[] _sendBuffer = _sendQueue.Dequeue();
+                _pendingList.Add(new ArraySegment<byte>(_sendBuffer, 0, _sendBuffer.Length));
             }
+
             _sendArgs.BufferList = _pendingList;
 
             bool pending = _socket.SendAsync(_sendArgs);
@@ -115,7 +72,7 @@ namespace ServerCore
                 OnSendCompleted(null, _sendArgs);
         }
 
-        void OnSendCompleted(object sender, SocketAsyncEventArgs args)
+        public void OnSendCompleted(object sender, SocketAsyncEventArgs args)
         {
             lock (_lock)
             {
@@ -149,18 +106,18 @@ namespace ServerCore
             }
         }
 
-        void RegisterRecv()
+        public void RegisterRecv()
         {
             _recvBuffer.Clean();
-            ArraySegment<byte> segment = _recvBuffer.WriteSegment;
-            _recvArgs.SetBuffer(segment.Array, segment.Offset, segment.Count);
+            ArraySegment<byte> recvSegment = _recvBuffer.WriteSegment;
+            _recvArgs.SetBuffer(recvSegment.Array, recvSegment.Offset, recvSegment.Count);
 
             bool pending = _socket.ReceiveAsync(_recvArgs);
             if (pending == false)
                 OnRecvCompleted(null, _recvArgs);
         }
 
-        void OnRecvCompleted(object sender, SocketAsyncEventArgs args)
+        public void OnRecvCompleted(object sender, SocketAsyncEventArgs args)
         {
             if (args.BytesTransferred > 0 && args.SocketError == SocketError.Success)
             {
@@ -199,8 +156,6 @@ namespace ServerCore
             {
                 Disconnect();
             }
-
         }
-        #endregion
     }
 }
