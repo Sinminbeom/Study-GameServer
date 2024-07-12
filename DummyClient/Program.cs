@@ -6,17 +6,34 @@ using ServerCore;
 
 namespace DummyClient
 {
-    class GameSession : Session
+    public class Packet
+    {
+        public ushort size;
+        public ushort packetId;
+    }
+    class GameSession : PacketSession
     {
         public override void OnConnected(EndPoint endPoint)
         {
             Console.WriteLine($"OnConnected {endPoint}");
 
+            Packet packet = new Packet() { size = 4, packetId = 10 };
+
             for (int i = 0; i < 5; i++)
             {
+                //byte[] sendBuffer = new byte[4096];
+                ArraySegment<byte> openSegment = SendBufferHelper.Open(4096);
+                byte[] buffer = BitConverter.GetBytes(packet.size);
+                byte[] buffer2 = BitConverter.GetBytes(packet.packetId);
+                Array.Copy(buffer, 0, openSegment.Array, openSegment.Offset, buffer.Length);
+                Array.Copy(buffer2, 0, openSegment.Array, openSegment.Offset + buffer.Length, buffer2.Length);
+                ArraySegment<byte> sendBuffer = SendBufferHelper.Close(packet.size);
+
+
                 // 보낸다
-                byte[] sendBuff = Encoding.UTF8.GetBytes($"Hello World! {i} ");
-                Send(sendBuff);
+                //byte[] sendBuff = Encoding.UTF8.GetBytes($"Hello World! {i} ");
+                //Send(sendBuff);
+                Send(sendBuffer);
             }
         }
 
@@ -25,11 +42,19 @@ namespace DummyClient
             Console.WriteLine($"OnDisconnected {endPoint}");
         }
 
-        public override int OnRecv(ArraySegment<byte> buffer)
+        //public override int OnRecv(ArraySegment<byte> buffer)
+        //{
+        //    string recvData = Encoding.UTF8.GetString(buffer.Array, buffer.Offset, buffer.Count);
+        //    Console.WriteLine($"[From Server] {recvData}");
+        //    return buffer.Count;
+        //}
+
+        public override int OnRecvPacket(ArraySegment<byte> buffer)
         {
-            string recvData = Encoding.UTF8.GetString(buffer.Array, buffer.Offset, buffer.Count);
-            Console.WriteLine($"[From Server] {recvData}");
-            return buffer.Count;
+            int dataSize = BitConverter.ToUInt16(buffer.Array, 0);
+            int packetId = BitConverter.ToUInt16(buffer.Array, 2);
+            Console.WriteLine($"size = {dataSize}, packetId = {packetId}");
+            return dataSize;
         }
 
         public override void OnSend(int numOfBytes)

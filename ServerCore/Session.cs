@@ -8,6 +8,38 @@ using System.Threading.Tasks;
 
 namespace ServerCore
 {
+    public abstract class PacketSession : Session
+    {
+        int Header = 2;
+        public sealed override int OnRecv(ArraySegment<byte> buffer)
+        {
+            int processLen = 0;
+
+            while (true)
+            {
+                int size = BitConverter.ToUInt16(buffer.Array, 0);
+                int packetId = BitConverter.ToUInt16(buffer.Array, 2);
+
+                // 사이즈 헤더까지는 왔는지 확인
+                if (buffer.Count < Header)
+                    break;
+
+                // 사이즈만큼 왔는지 확인
+                if (buffer.Count < size)
+                    break;
+                
+                OnRecvPacket(new ArraySegment<byte>(buffer.Array, buffer.Offset + size, size));
+
+                processLen += size;
+
+                buffer = new ArraySegment<byte>(buffer.Array, buffer.Offset + size, buffer.Count - size);
+            }
+
+            return processLen;
+        }
+
+        public abstract int OnRecvPacket(ArraySegment<byte> buffer);
+    }
     public abstract class Session
     {
         Socket _socket;
@@ -15,8 +47,8 @@ namespace ServerCore
 
         RecvBuffer _recvBuffer = new RecvBuffer(1024);
 
+        Queue<ArraySegment<byte>> _sendQueue = new Queue<ArraySegment<byte>>();
         object _lock = new object();
-        Queue<byte[]> _sendQueue = new Queue<byte[]>();
         //bool _pending = false;
 
         List<ArraySegment<byte>> _pendingList = new List<ArraySegment<byte>>();
@@ -39,7 +71,7 @@ namespace ServerCore
             RegisterRecv();
         }
 
-        public void Send(byte[] sendBuff)
+        public void Send(ArraySegment<byte> sendBuff)
         {
             lock (_lock)
             {
@@ -73,8 +105,8 @@ namespace ServerCore
             //_pendingList.Clear();
             while (_sendQueue.Count > 0)
             {
-                byte[] buffer = _sendQueue.Dequeue();
-                _pendingList.Add(new ArraySegment<byte>(buffer, 0, buffer.Length));
+                ArraySegment<byte> buffer = _sendQueue.Dequeue();
+                _pendingList.Add(buffer);
             }
             _sendArgs.BufferList = _pendingList;
 
