@@ -6,73 +6,6 @@ using ServerCore;
 
 namespace Server
 {
-    //public class Knight
-    //{
-    //    public int hp;
-    //    public int attack;
-    //    public string name;
-    //    public List<int> skills = new List<int>();
-    //}
-    public class Packet
-    {
-        public ushort size;
-        public ushort packetId;
-    }
-    class GameSession : PacketSession
-    {
-        public override void OnConnected(EndPoint endPoint)
-        {
-            Console.WriteLine($"OnConnected {endPoint}");
-
-            //Knight knight = new Knight() { hp = 100, attack = 10 };
-            Packet packet = new Packet() { size = 4, packetId = 10 };
-
-            //byte[] sendBuffer = new byte[4096];
-            ArraySegment<byte> openSegment = SendBufferHelper.Open(4096);
-            byte[] buffer = BitConverter.GetBytes(packet.size);
-            byte[] buffer2 = BitConverter.GetBytes(packet.packetId);
-            Array.Copy(buffer, 0, openSegment.Array, 0, buffer.Length);
-            Array.Copy(buffer2, 0, openSegment.Array, buffer.Length, buffer2.Length);
-            ArraySegment<byte> sendBuffer = SendBufferHelper.Close(buffer.Length + buffer2.Length);
-
-            //int test1 = BitConverter.ToInt32(sendBuffer.Array, 0);
-            //int test2 = BitConverter.ToInt32(sendBuffer.Array, 4);
-            //Console.WriteLine($"!!!!!!!!!!!!! {test1} : {test2}");
-            Send(sendBuffer);
-
-            //byte[] sendBuff = Encoding.UTF8.GetBytes("Welcome to MMORPG Server !");
-            //Send(sendBuff);
-
-            Thread.Sleep(5000);
-
-            Disconnect();
-        }
-
-        public override void OnDisconnected(EndPoint endPoint)
-        {
-            Console.WriteLine($"OnDisconnected {endPoint}");
-        }
-
-        public override int OnRecvPacket(ArraySegment<byte> buffer)
-        {
-            int dataSize = BitConverter.ToUInt16(buffer.Array, 0);
-            int packetId = BitConverter.ToUInt16(buffer.Array, 2);
-            Console.WriteLine($"size = {dataSize}, packetId = {packetId}");
-            return dataSize;
-        }
-
-        //public override int OnRecv(ArraySegment<byte> buffer)
-        //{
-        //    string recvData = Encoding.UTF8.GetString(buffer.Array, buffer.Offset, buffer.Count);
-        //    Console.WriteLine($"[From Client] {recvData}");
-        //    return buffer.Count;
-        //}
-
-        public override void OnSend(int numOfBytes)
-        {
-            Console.WriteLine($"Transferred bytes: {numOfBytes}");
-        }
-    }
 
     class Program
     {
@@ -81,7 +14,7 @@ namespace Server
         {
             try
             {
-                GameSession session = new GameSession();
+                ClientSession session = new ClientSession();
                 session.Start(clientSocket);
 
                 byte[] sendBuff = Encoding.UTF8.GetBytes("Welcome to MMORPG Server !");
@@ -107,7 +40,7 @@ namespace Server
             IPEndPoint endPoint = new IPEndPoint(ipAddr, 7777);
 
             // 문지기
-            _listener.Init(endPoint, () => { return new GameSession(); });
+            _listener.Init(endPoint, () => { return new ClientSession(); });
             Console.WriteLine("Listening...");
 
             while (true)
