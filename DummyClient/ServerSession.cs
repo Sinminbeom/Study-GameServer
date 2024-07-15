@@ -8,21 +8,61 @@ using System.Threading.Tasks;
 
 namespace DummyClient
 {
-    public class Packet
+    public abstract class Packet
     {
         public ushort size;
         public ushort packetId;
+
+        public abstract ArraySegment<byte> Write();
+        public abstract void Read(ArraySegment<byte> segment);
     }
 
     public class PlayerInfoReq : Packet
     {
         public long playerId;
+
+        public PlayerInfoReq()
+        {
+            this.packetId = (ushort)PacketID.PlayerInfoReq;
+        }
+
+        public override void Read(ArraySegment<byte> segment)
+        {
+            ushort count = 0;
+            //this.size = BitConverter.ToUInt16(segment.Array, segment.Offset);
+            count += 2;
+            //this.packetId = BitConverter.ToUInt16(segment.Array, segment.Offset + count);
+            count += 2;
+            this.playerId = BitConverter.ToInt64(segment.Array, segment.Offset + count);
+            count += 8;
+        }
+
+        public override ArraySegment<byte> Write()
+        {
+            ArraySegment<byte> segment = SendBufferHelper.Open(4096);
+            byte[] size = BitConverter.GetBytes(this.size);
+            byte[] packetId = BitConverter.GetBytes(this.packetId);
+            byte[] playerId = BitConverter.GetBytes(this.playerId);
+
+            ushort count = 0;
+            bool success = true;
+
+            count += 2;
+            success &= BitConverter.TryWriteBytes(new Span<byte>(segment.Array, segment.Offset + count, segment.Count - count), this.packetId);
+            count += 2;
+            success &= BitConverter.TryWriteBytes(new Span<byte>(segment.Array, segment.Offset + count, segment.Count - count), this.playerId);
+            count += 8;
+
+            success &= BitConverter.TryWriteBytes(new Span<byte>(segment.Array, segment.Offset, segment.Count), (ushort)4);
+
+            if (success == false)
+                return null;
+
+            ArraySegment<byte> sendBuffer = SendBufferHelper.Close(count);
+            return sendBuffer;
+        }
     }
-    public class PlayerInfoOk : Packet
-    {
-        public int hp;
-        public int attack;
-    }
+
     public enum PacketID
     {
         PlayerInfoReq = 1,
@@ -39,33 +79,14 @@ namespace DummyClient
         {
             Console.WriteLine($"OnConnected {endPoint}");
 
-            PlayerInfoReq packet = new PlayerInfoReq() { size = 4, packetId = (ushort)PacketID.PlayerInfoReq, playerId = 100 };
+            PlayerInfoReq packet = new PlayerInfoReq() { playerId = 100 };
 
             for (int i = 0; i < 5; i++)
             {
-                ArraySegment<byte> segment = SendBufferHelper.Open(4096);
-                byte[] size = BitConverter.GetBytes(packet.size);
-                byte[] packetId = BitConverter.GetBytes(packet.packetId);
-                byte[] playerId = BitConverter.GetBytes(packet.playerId);
+                ArraySegment<byte> segment = packet.Write();
 
-                ushort count = 0;
-                bool success = true;
-
-
-
-                //success &= BitConverter.TryWriteBytes(new Span<byte>(segment.Array, segment.Offset, segment.Count), packet.size);
-                count += 2;
-                success &= BitConverter.TryWriteBytes(new Span<byte>(segment.Array, segment.Offset + count, segment.Count - count), packet.packetId);
-                count += 2;
-                success &= BitConverter.TryWriteBytes(new Span<byte>(segment.Array, segment.Offset + count, segment.Count - count), packet.playerId);
-                count += 8;
-
-                success &= BitConverter.TryWriteBytes(new Span<byte>(segment.Array, segment.Offset, segment.Count), count);
-
-                ArraySegment<byte> sendBuffer = SendBufferHelper.Close(count);
-
-                if (success)
-                    Send(sendBuffer);
+                if (segment != null)
+                    Send(segment);
             }
         }
 
@@ -83,15 +104,29 @@ namespace DummyClient
 
         public override int OnRecvPacket(ArraySegment<byte> buffer)
         {
-            int dataSize = BitConverter.ToUInt16(buffer.Array, 0);
-            int packetId = BitConverter.ToUInt16(buffer.Array, 2);
-            Console.WriteLine($"size = {dataSize}, packetId = {packetId}");
+            ushort count = 0;
+            int dataSize = BitConverter.ToUInt16(buffer.Array, buffer.Offset);
+            count += 2;
+            int packetId = BitConverter.ToUInt16(buffer.Array, buffer.Offset + count);
+            count += 2;
+
+            switch ((PacketID)packetId)
+            {
+                case PacketID.PlayerInfoReq:
+                    {
+                        PlayerInfoReq packet = new PlayerInfoReq();
+                        packet.Read(buffer);
+                        Console.WriteLine($"PlayerInfoReq: {packet.playerId}");
+                    }
+                    break;
+            }
+
             return dataSize;
         }
 
         public override void OnSend(int numOfBytes)
         {
-            Console.WriteLine($"Transferred bytes: {numOfBytes}");
+            Console.WriteLine($"Send Transferred bytes: {numOfBytes}");
         }
     }
 }

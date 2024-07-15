@@ -17,18 +17,16 @@ namespace ServerCore
 
             while (true)
             {
-                int size = BitConverter.ToUInt16(buffer.Array, 0);
-                int packetId = BitConverter.ToUInt16(buffer.Array, 2);
-
                 // 사이즈 헤더까지는 왔는지 확인
                 if (buffer.Count < Header)
                     break;
 
                 // 사이즈만큼 왔는지 확인
+                ushort size = BitConverter.ToUInt16(buffer.Array, buffer.Offset);
                 if (buffer.Count < size)
                     break;
                 
-                OnRecvPacket(new ArraySegment<byte>(buffer.Array, buffer.Offset + size, size));
+                OnRecvPacket(new ArraySegment<byte>(buffer.Array, buffer.Offset, size));
 
                 processLen += size;
 
