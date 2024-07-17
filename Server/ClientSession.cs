@@ -20,6 +20,7 @@ namespace Server
     public class PlayerInfoReq : Packet
     {
         public long playerId;
+        public string name;
 
         public PlayerInfoReq()
         {
@@ -28,6 +29,8 @@ namespace Server
 
         public override void Read(ArraySegment<byte> segment)
         {
+            Span<byte> span = new Span<byte>(segment.Array, segment.Offset, segment.Count);
+
             ushort count = 0;
             //this.size = BitConverter.ToUInt16(segment.Array, segment.Offset);
             count += 2;
@@ -35,8 +38,14 @@ namespace Server
             count += 2;
             //this.playerId = BitConverter.ToInt64(segment.Array, segment.Offset + count);
             //this.playerId = BitConverter.ToInt64(new ArraySegment<byte>(segment.Array, segment.Offset + count, segment.Count - count));
-            this.playerId = BitConverter.ToInt64(new ReadOnlySpan<byte>(segment.Array, segment.Offset + count, segment.Count - count));
+            //this.playerId = BitConverter.ToInt64(new ReadOnlySpan<byte>(segment.Array, segment.Offset + count, segment.Count - count));
+            this.playerId = BitConverter.ToInt64(span.Slice(count, span.Length - count));
             count += 8;
+
+            //ushort nameLen = BitConverter.ToUInt16(new ReadOnlySpan<byte>(segment.Array, segment.Offset + count, segment.Count - count));
+            ushort nameLen = BitConverter.ToUInt16(span.Slice(count, span.Length - count));
+            count += 2;
+            this.name = Encoding.Unicode.GetString(span.Slice(count, nameLen));
         }
 
         public override ArraySegment<byte> Write()
@@ -49,13 +58,26 @@ namespace Server
             ushort count = 0;
             bool success = true;
 
+            Span<byte> span = new Span<byte>(segment.Array, segment.Offset, segment.Count);
+
             count += 2;
-            success &= BitConverter.TryWriteBytes(new Span<byte>(segment.Array, segment.Offset + count, segment.Count - count), this.packetId);
+            //success &= BitConverter.TryWriteBytes(new Span<byte>(segment.Array, segment.Offset + count, segment.Count - count), this.packetId);
+            success &= BitConverter.TryWriteBytes(span.Slice(count, span.Length - count), this.packetId);
             count += 2;
-            success &= BitConverter.TryWriteBytes(new Span<byte>(segment.Array, segment.Offset + count, segment.Count - count), this.playerId);
+            //success &= BitConverter.TryWriteBytes(new Span<byte>(segment.Array, segment.Offset + count, segment.Count - count), this.playerId);
+            success &= BitConverter.TryWriteBytes(span.Slice(count, span.Length - count), this.playerId);
             count += 8;
 
-            success &= BitConverter.TryWriteBytes(new Span<byte>(segment.Array, segment.Offset, segment.Count), count);
+            //ushort nameLen = (ushort)Encoding.Unicode.GetByteCount(this.name);
+            ushort nameLen = (ushort)Encoding.Unicode.GetBytes(this.name, 0, this.name.Length, segment.Array, segment.Offset + count + sizeof(ushort));
+            success &= BitConverter.TryWriteBytes(span.Slice(count, span.Length - count), nameLen);
+            count += sizeof(ushort);
+            count += nameLen;
+
+
+            //success &= BitConverter.TryWriteBytes(span, count);
+            success &= BitConverter.TryWriteBytes(span, count);
+
 
             if (success == false)
                 return null;
@@ -75,7 +97,7 @@ namespace Server
         {
             Console.WriteLine($"OnConnected {endPoint}");
 
-            PlayerInfoReq packet = new PlayerInfoReq() { playerId = 100 };
+            PlayerInfoReq packet = new PlayerInfoReq() { playerId = 100, name = "minbeom" };
 
             for (int i = 0; i < 5; i++)
             {
@@ -110,7 +132,7 @@ namespace Server
                     {
                         PlayerInfoReq packet = new PlayerInfoReq();
                         packet.Read(buffer);
-                        Console.WriteLine($"PlayerInfoReq: {packet.playerId}");
+                        Console.WriteLine($"PlayerInfoReq {{ {packet.playerId}, {packet.name} }}");
                     }
                     break;
             }
