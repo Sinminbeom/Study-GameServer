@@ -21,7 +21,6 @@ namespace ServerCore
                 _currentBuffer.Value = new SendBuffer(ChunkSize);
 
             ArraySegment<byte> segment = _currentBuffer.Value.Open(reserveSize);
-            Console.WriteLine("fdfdfdfdfd");
             return segment;
         }
 
