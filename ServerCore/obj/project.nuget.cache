@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "klBUsKJ1smkkG5IvPy5n00Hk1cVpU5fMtwXpm0a4gLjKxsx0Uh4lZ8n8BnSIS5DwC3JLuUI0DkdirVhhG2FvYw==",
+  "dgSpecHash": "FAenWRbzq3k=",
   "success": true,
-  "projectFilePath": "D:\\source\\GitSource\\Study-GameServer\\ServerCore\\ServerCore.csproj",
+  "projectFilePath": "D:\\source\\git\\Study-GameServer\\ServerCore\\ServerCore.csproj",
   "expectedPackageFiles": [],
   "logs": []
 }

@@ -21,7 +21,7 @@ namespace PacketGenerator
                     if (r.Depth == 1 && r.NodeType == XmlNodeType.Element)
                         ParsePacket(r);
 
-                    //Console.WriteLine($"{r.Name} {r["name"]}");
+                    Console.WriteLine($"{r.Name} {r["name"]}");
                 }
             }
         }

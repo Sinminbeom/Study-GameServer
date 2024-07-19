@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "U+eFvdiAl9zqXoYZuH6XyccwJXkWJySWPvwlgnM8+cJxvjTt1wI8G3Crmx5Npjz2o52J5r55u+BGrdqj+HblMw==",
+  "dgSpecHash": "JuVmlQAQWug=",
   "success": true,
-  "projectFilePath": "D:\\source\\GitSource\\Study-GameServer\\Server\\Server.csproj",
+  "projectFilePath": "D:\\source\\git\\Study-GameServer\\Server\\Server.csproj",
   "expectedPackageFiles": [],
   "logs": []
 }

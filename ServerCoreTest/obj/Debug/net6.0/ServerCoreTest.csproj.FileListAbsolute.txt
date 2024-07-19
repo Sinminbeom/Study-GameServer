@@ -1,0 +1,12 @@
+D:\source\git\Study-GameServer\ServerCoreTest\bin\Debug\net6.0\ServerCoreTest.deps.json
+D:\source\git\Study-GameServer\ServerCoreTest\bin\Debug\net6.0\ServerCoreTest.dll
+D:\source\git\Study-GameServer\ServerCoreTest\bin\Debug\net6.0\ServerCoreTest.pdb
+D:\source\git\Study-GameServer\ServerCoreTest\obj\Debug\net6.0\ServerCoreTest.GeneratedMSBuildEditorConfig.editorconfig
+D:\source\git\Study-GameServer\ServerCoreTest\obj\Debug\net6.0\ServerCoreTest.AssemblyInfoInputs.cache
+D:\source\git\Study-GameServer\ServerCoreTest\obj\Debug\net6.0\ServerCoreTest.AssemblyInfo.cs
+D:\source\git\Study-GameServer\ServerCoreTest\obj\Debug\net6.0\ServerCoreTest.csproj.CoreCompileInputs.cache
+D:\source\git\Study-GameServer\ServerCoreTest\obj\Debug\net6.0\ServerCoreTest.sourcelink.json
+D:\source\git\Study-GameServer\ServerCoreTest\obj\Debug\net6.0\ServerCoreTest.dll
+D:\source\git\Study-GameServer\ServerCoreTest\obj\Debug\net6.0\refint\ServerCoreTest.dll
+D:\source\git\Study-GameServer\ServerCoreTest\obj\Debug\net6.0\ServerCoreTest.pdb
+D:\source\git\Study-GameServer\ServerCoreTest\obj\Debug\net6.0\ref\ServerCoreTest.dll

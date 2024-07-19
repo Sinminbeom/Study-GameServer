@@ -1,0 +1,15 @@
+D:\source\git\Study-GameServer\PacketGenerator\bin\Debug\net6.0\PacketGenerator.exe
+D:\source\git\Study-GameServer\PacketGenerator\bin\Debug\net6.0\PacketGenerator.deps.json
+D:\source\git\Study-GameServer\PacketGenerator\bin\Debug\net6.0\PacketGenerator.runtimeconfig.json
+D:\source\git\Study-GameServer\PacketGenerator\bin\Debug\net6.0\PacketGenerator.dll
+D:\source\git\Study-GameServer\PacketGenerator\bin\Debug\net6.0\PacketGenerator.pdb
+D:\source\git\Study-GameServer\PacketGenerator\obj\Debug\net6.0\PacketGenerator.GeneratedMSBuildEditorConfig.editorconfig
+D:\source\git\Study-GameServer\PacketGenerator\obj\Debug\net6.0\PacketGenerator.AssemblyInfoInputs.cache
+D:\source\git\Study-GameServer\PacketGenerator\obj\Debug\net6.0\PacketGenerator.AssemblyInfo.cs
+D:\source\git\Study-GameServer\PacketGenerator\obj\Debug\net6.0\PacketGenerator.csproj.CoreCompileInputs.cache
+D:\source\git\Study-GameServer\PacketGenerator\obj\Debug\net6.0\PacketGenerator.sourcelink.json
+D:\source\git\Study-GameServer\PacketGenerator\obj\Debug\net6.0\PacketGenerator.dll
+D:\source\git\Study-GameServer\PacketGenerator\obj\Debug\net6.0\refint\PacketGenerator.dll
+D:\source\git\Study-GameServer\PacketGenerator\obj\Debug\net6.0\PacketGenerator.pdb
+D:\source\git\Study-GameServer\PacketGenerator\obj\Debug\net6.0\PacketGenerator.genruntimeconfig.cache
+D:\source\git\Study-GameServer\PacketGenerator\obj\Debug\net6.0\ref\PacketGenerator.dll
