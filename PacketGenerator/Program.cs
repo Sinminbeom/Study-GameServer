@@ -51,8 +51,20 @@ namespace PacketGenerator
         {
             string packetName = r["name"];
 
+            int depth = r.Depth + 1;
             while (r.Read())
             {
+                if (r.Depth != depth)
+                    break;
+
+                string memberName = r["name"];
+                if (string.IsNullOrEmpty(memberName))
+                {
+                    Console.WriteLine("Member without name");
+                    return;
+                }
+
+                string memberType = r.Name.ToLower();
 
             }
         }
