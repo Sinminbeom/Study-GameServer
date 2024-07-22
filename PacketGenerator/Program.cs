@@ -12,7 +12,7 @@ namespace PacketGenerator
                 IgnoreWhitespace = true
             };
 
-            using (XmlReader r = XmlReader.Create("PDL.xml", settings))
+            using (XmlReader r = XmlReader.Create("data/PDL.xml", settings))
             {
                 r.MoveToContent();
 
