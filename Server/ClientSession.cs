@@ -5,10 +5,10 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
-using static Server.PlayerInfoReq;
 
 namespace Server
 {
+    /*
     public abstract class Packet
     {
         public ushort size;
@@ -146,6 +146,7 @@ namespace Server
         PlayerInfoReq = 1,
         PlayerInfoOk = 2
     }
+    */
     class ClientSession : PacketSession
     {
         public override void OnConnected(EndPoint endPoint)

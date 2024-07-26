@@ -5,10 +5,10 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
-using static DummyClient.PlayerInfoReq;
 
 namespace DummyClient
 {
+    /*
     public abstract class Packet
     {
         public ushort size;
@@ -146,6 +146,7 @@ namespace DummyClient
         PlayerInfoReq = 1,
         PlayerInfoOk = 2
     }
+    */
     class ServerSession : PacketSession
     {
         static unsafe void ToBytes(byte[] array, int offset, ulong value)
