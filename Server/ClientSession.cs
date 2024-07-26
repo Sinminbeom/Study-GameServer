@@ -5,7 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
-using static PlayerInfoReq;
+using static C_PlayerInfoReq;
 
 namespace Server
 {
@@ -154,7 +154,7 @@ namespace Server
         {
             Console.WriteLine($"OnConnected {endPoint}");
 
-            PlayerInfoReq packet = new PlayerInfoReq() { playerId = 100, name = "minbeom" };
+            C_PlayerInfoReq packet = new C_PlayerInfoReq() { playerId = 100, name = "minbeom" };
 
             packet.skills.Add(new Skill { id = 501, duration = 5.0f, level = 5 });
             packet.skills.Add(new Skill { id = 601, duration = 6.0f, level = 6 });

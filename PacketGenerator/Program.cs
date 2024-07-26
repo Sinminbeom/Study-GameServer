@@ -8,7 +8,8 @@ namespace PacketGenerator
         static ushort packetId;
         static string packetEnums;
 
-        static string managerRegister;
+        static string clientRegister;
+        static string serverRegister;
 
         private static void Main(string[] args)
         {
@@ -37,8 +38,11 @@ namespace PacketGenerator
 
                 string fileText = string.Format(PacketFormat.fileFormat, packetEnums, genPackets);
                 File.WriteAllText("GenPackets.cs", fileText);
-                string managerText = string.Format(PacketFormat.managerFormat, managerRegister);
-                File.WriteAllText("PacketManager.cs", managerText);
+                string clientManagerText = string.Format(PacketFormat.managerFormat, clientRegister);
+                File.WriteAllText("ClientPacketManager.cs", clientManagerText);
+                string serverManagerText = string.Format(PacketFormat.managerFormat, serverRegister);
+                File.WriteAllText("ServerPacketManager.cs", serverManagerText);
+
             }
         }
 
@@ -63,7 +67,11 @@ namespace PacketGenerator
             Tuple<string, string, string> t = ParseMembers(r);
             genPackets += string.Format(PacketFormat.packetFormat, packetName, t.Item1, t.Item2, t.Item3);
             packetEnums += string.Format(PacketFormat.packetEnumFormat, packetName, ++packetId) + Environment.NewLine + "\t";
-            managerRegister += string.Format(PacketFormat.managerRegisterFormat, packetName) + Environment.NewLine;
+
+            if (packetName.StartsWith("S_") || packetName.StartsWith("s_"))
+                clientRegister += string.Format(PacketFormat.managerRegisterFormat, packetName) + Environment.NewLine;
+            else
+                serverRegister += string.Format(PacketFormat.managerRegisterFormat, packetName) + Environment.NewLine;
         }
 
         // {1} 멤버 변수들

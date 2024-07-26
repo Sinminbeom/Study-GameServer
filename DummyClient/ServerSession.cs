@@ -5,7 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
-using static PlayerInfoReq;
+using static C_PlayerInfoReq;
 
 namespace DummyClient
 {
@@ -159,7 +159,7 @@ namespace DummyClient
         {
             Console.WriteLine($"OnConnected {endPoint}");
 
-            PlayerInfoReq packet = new PlayerInfoReq() { playerId = 100, name = "subin" };
+            C_PlayerInfoReq packet = new C_PlayerInfoReq() { playerId = 100, name = "subin" };
             Skill skill = new Skill { id = 101, duration = 1.0f, level = 1 };
             skill.attributes.Add(new Skill.Attribute { att = 77 });
             packet.skills.Add(skill);
@@ -199,9 +199,9 @@ namespace DummyClient
 
             switch ((PacketID)packetId)
             {
-                case PacketID.PlayerInfoReq:
+                case PacketID.C_PlayerInfoReq:
                     {
-                        PlayerInfoReq packet = new PlayerInfoReq();
+                        C_PlayerInfoReq packet = new C_PlayerInfoReq();
                         packet.Read(buffer);
 
                         foreach (Skill skill in packet.skills)
