@@ -36,7 +36,7 @@ namespace ServerCore
             return processLen;
         }
 
-        public abstract int OnRecvPacket(ArraySegment<byte> buffer);
+        public abstract void OnRecvPacket(ArraySegment<byte> buffer);
     }
     public abstract class Session
     {

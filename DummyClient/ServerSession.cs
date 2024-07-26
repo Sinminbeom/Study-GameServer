@@ -5,10 +5,11 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
-using static DummyClient.PlayerInfoReq;
+using static C_PlayerInfoReq;
 
 namespace DummyClient
 {
+    /*
     public abstract class Packet
     {
         public ushort size;
@@ -146,6 +147,7 @@ namespace DummyClient
         PlayerInfoReq = 1,
         PlayerInfoOk = 2
     }
+    */
     class ServerSession : PacketSession
     {
         static unsafe void ToBytes(byte[] array, int offset, ulong value)
@@ -157,12 +159,14 @@ namespace DummyClient
         {
             Console.WriteLine($"OnConnected {endPoint}");
 
-            PlayerInfoReq packet = new PlayerInfoReq() { playerId = 100, name = "subin" };
+            C_PlayerInfoReq packet = new C_PlayerInfoReq() { playerId = 100, name = "subin" };
+            Skill skill = new Skill { id = 101, duration = 1.0f, level = 1 };
+            skill.attributes.Add(new Skill.Attribute { att = 77 });
+            packet.skills.Add(skill);
 
-            packet.skills.Add(new SkillInfo { id = 101, duration = 1.0f, level = 1 });
-            packet.skills.Add(new SkillInfo { id = 201, duration = 2.0f, level = 2 });
-            packet.skills.Add(new SkillInfo { id = 301, duration = 3.0f, level = 3 });
-            packet.skills.Add(new SkillInfo { id = 401, duration = 4.0f, level = 4 });
+            packet.skills.Add(new Skill { id = 201, duration = 2.0f, level = 2 });
+            packet.skills.Add(new Skill { id = 301, duration = 3.0f, level = 3 });
+            packet.skills.Add(new Skill { id = 401, duration = 4.0f, level = 4 });
 
             for (int i = 0; i < 5; i++)
             {
@@ -185,7 +189,7 @@ namespace DummyClient
         //    return buffer.Count;
         //}
 
-        public override int OnRecvPacket(ArraySegment<byte> buffer)
+        public override void OnRecvPacket(ArraySegment<byte> buffer)
         {
             ushort count = 0;
             int dataSize = BitConverter.ToUInt16(buffer.Array, buffer.Offset);
@@ -195,21 +199,21 @@ namespace DummyClient
 
             switch ((PacketID)packetId)
             {
-                case PacketID.PlayerInfoReq:
+                case PacketID.C_PlayerInfoReq:
                     {
-                        PlayerInfoReq packet = new PlayerInfoReq();
+                        C_PlayerInfoReq packet = new C_PlayerInfoReq();
                         packet.Read(buffer);
 
-                        foreach (SkillInfo skill in packet.skills)
+                        foreach (Skill skill in packet.skills)
                         {
-                            Console.WriteLine($"SkillInfo ({skill.id})({skill.level})({skill.duration})");
+                            Console.WriteLine($"Skill ({skill.id})({skill.level})({skill.duration})");
                         }
                         Console.WriteLine($"PlayerInfoReq {{ {packet.playerId}, {packet.name} }}");
                     }
                     break;
             }
 
-            return dataSize;
+            return;
         }
 
         public override void OnSend(int numOfBytes)
