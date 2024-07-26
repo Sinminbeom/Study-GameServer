@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using static PlayerInfoReq;
 
 namespace Server
 {
@@ -155,10 +156,10 @@ namespace Server
 
             PlayerInfoReq packet = new PlayerInfoReq() { playerId = 100, name = "minbeom" };
 
-            packet.skills.Add(new SkillInfo { id = 501, duration = 5.0f, level = 5 });
-            packet.skills.Add(new SkillInfo { id = 601, duration = 6.0f, level = 6 });
-            packet.skills.Add(new SkillInfo { id = 701, duration = 7.0f, level = 7 });
-            packet.skills.Add(new SkillInfo { id = 801, duration = 8.0f, level = 8 });
+            packet.skills.Add(new Skill { id = 501, duration = 5.0f, level = 5 });
+            packet.skills.Add(new Skill { id = 601, duration = 6.0f, level = 6 });
+            packet.skills.Add(new Skill { id = 701, duration = 7.0f, level = 7 });
+            packet.skills.Add(new Skill { id = 801, duration = 8.0f, level = 8 });
 
             for (int i = 0; i < 5; i++)
             {
@@ -179,31 +180,32 @@ namespace Server
             Console.WriteLine($"OnDisconnected {endPoint}");
         }
 
-        public override int OnRecvPacket(ArraySegment<byte> buffer)
+        public override void OnRecvPacket(ArraySegment<byte> buffer)
         {
-            ushort count = 0;
-            int dataSize = BitConverter.ToUInt16(buffer.Array, buffer.Offset);
-            count += 2;
-            int packetId = BitConverter.ToUInt16(buffer.Array, buffer.Offset + count);
-            count += 2;
+            PacketManager.Instance.OnRecvPacket(this, buffer);
+            //ushort count = 0;
+            //int dataSize = BitConverter.ToUInt16(buffer.Array, buffer.Offset);
+            //count += 2;
+            //int packetId = BitConverter.ToUInt16(buffer.Array, buffer.Offset + count);
+            //count += 2;
 
-            switch ((PacketID)packetId)
-            {
-                case PacketID.PlayerInfoReq:
-                    {
-                        PlayerInfoReq packet = new PlayerInfoReq();
-                        packet.Read(buffer);
+            //switch ((PacketID)packetId)
+            //{
+            //    case PacketID.PlayerInfoReq:
+            //        {
+            //            PlayerInfoReq packet = new PlayerInfoReq();
+            //            packet.Read(buffer);
 
-                        foreach (SkillInfo skill in packet.skills)
-                        {
-                            Console.WriteLine($"SkillInfo ({skill.id})({skill.level})({skill.duration})");
-                        }
-                        Console.WriteLine($"PlayerInfoReq {{ {packet.playerId}, {packet.name} }}");
-                    }
-                    break;
-            }
+            //            foreach (Skill skill in packet.skills)
+            //            {
+            //                Console.WriteLine($"Skill ({skill.id})({skill.level})({skill.duration})");
+            //            }
+            //            Console.WriteLine($"PlayerInfoReq {{ {packet.playerId}, {packet.name} }}");
+            //        }
+            //        break;
+            //}
 
-            return dataSize;
+            //return dataSize;
         }
 
         //public override int OnRecv(ArraySegment<byte> buffer)

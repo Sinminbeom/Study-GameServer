@@ -8,6 +8,8 @@ namespace PacketGenerator
         static ushort packetId;
         static string packetEnums;
 
+        static string managerRegister;
+
         private static void Main(string[] args)
         {
             string pdlPath = "../PDL.xml";
@@ -32,9 +34,11 @@ namespace PacketGenerator
 
                     //Console.WriteLine($"{r.Name} || {r["name"]}");
                 }
-                Console.WriteLine(packetEnums);
+
                 string fileText = string.Format(PacketFormat.fileFormat, packetEnums, genPackets);
                 File.WriteAllText("GenPackets.cs", fileText);
+                string managerText = string.Format(PacketFormat.managerFormat, managerRegister);
+                File.WriteAllText("PacketManager.cs", managerText);
             }
         }
 
@@ -57,8 +61,9 @@ namespace PacketGenerator
             }
 
             Tuple<string, string, string> t = ParseMembers(r);
-            packetEnums += string.Format(PacketFormat.packetEnumFormat, packetName, ++packetId) + Environment.NewLine + "\t";
             genPackets += string.Format(PacketFormat.packetFormat, packetName, t.Item1, t.Item2, t.Item3);
+            packetEnums += string.Format(PacketFormat.packetEnumFormat, packetName, ++packetId) + Environment.NewLine + "\t";
+            managerRegister += string.Format(PacketFormat.managerRegisterFormat, packetName) + Environment.NewLine;
         }
 
         // {1} 멤버 변수들
@@ -115,9 +120,10 @@ namespace PacketGenerator
                         writeCode += string.Format(PacketFormat.writeStringFormat, memberName, memberType);
                         break;
                     case "list":
-                        memberCode += string.Format(PacketFormat.memberFormat, memberType, memberName);
-                        readCode += string.Format(PacketFormat.readStringFormat, memberName, ToMemberType(memberType), memberType);
-                        writeCode += string.Format(PacketFormat.writeStringFormat, memberName, memberType);
+                        Tuple<string, string, string> t = ParseList(r);
+                        memberCode += t.Item1;
+                        readCode += t.Item2;
+                        writeCode += t.Item3;
                         break;
                     default:
                         break;
@@ -150,11 +156,17 @@ namespace PacketGenerator
                 t.Item2,
                 t.Item3
             );
+            Console.WriteLine(memberCode);
             string readCode = string.Format(PacketFormat.readListFormat,
-                )
-            //string writeCode = writeCode.Replace("\n", "\n\t\t");
+                FirstCharToUpper(listName),
+                FirstCharToLower(listName)
+            );
+            string writeCode = string.Format(PacketFormat.writeListFormat,
+                FirstCharToUpper(listName),
+                FirstCharToLower(listName)
+            );
 
-            return new Tuple<string, string, string>();
+            return new Tuple<string, string, string>(memberCode, readCode, writeCode);
         }
 
 

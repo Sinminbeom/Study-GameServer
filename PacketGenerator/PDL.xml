@@ -7,6 +7,12 @@
       <int name="id" />
       <short name="level" />
       <float name="duration" />
+      <list name="attribute">
+        <int name="att" />
+      </list>
     </list>
+  </packet>
+  <packet name="Test">
+    <int name="testInt" />
   </packet>
 </PDL>
