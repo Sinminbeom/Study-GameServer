@@ -5,7 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
-using static C_PlayerInfoReq;
+//using static C_PlayerInfoReq;
 
 namespace DummyClient
 {
@@ -159,6 +159,7 @@ namespace DummyClient
         {
             Console.WriteLine($"OnConnected {endPoint}");
 
+            /*
             C_PlayerInfoReq packet = new C_PlayerInfoReq() { playerId = 100, name = "subin" };
             Skill skill = new Skill { id = 101, duration = 1.0f, level = 1 };
             skill.attributes.Add(new Skill.Attribute { att = 77 });
@@ -175,6 +176,7 @@ namespace DummyClient
                 if (segment != null)
                     Send(segment);
             }
+            */
         }
 
         public override void OnDisconnected(EndPoint endPoint)
@@ -191,29 +193,31 @@ namespace DummyClient
 
         public override void OnRecvPacket(ArraySegment<byte> buffer)
         {
-            ushort count = 0;
-            int dataSize = BitConverter.ToUInt16(buffer.Array, buffer.Offset);
-            count += 2;
-            int packetId = BitConverter.ToUInt16(buffer.Array, buffer.Offset + count);
-            count += 2;
 
-            switch ((PacketID)packetId)
-            {
-                case PacketID.C_PlayerInfoReq:
-                    {
-                        C_PlayerInfoReq packet = new C_PlayerInfoReq();
-                        packet.Read(buffer);
+            PacketManager.Instance.OnRecvPacket(this, buffer);
+            //ushort count = 0;
+            //int dataSize = BitConverter.ToUInt16(buffer.Array, buffer.Offset);
+            //count += 2;
+            //int packetId = BitConverter.ToUInt16(buffer.Array, buffer.Offset + count);
+            //count += 2;
 
-                        foreach (Skill skill in packet.skills)
-                        {
-                            Console.WriteLine($"Skill ({skill.id})({skill.level})({skill.duration})");
-                        }
-                        Console.WriteLine($"PlayerInfoReq {{ {packet.playerId}, {packet.name} }}");
-                    }
-                    break;
-            }
+            //switch ((PacketID)packetId)
+            //{
+            //    case PacketID.C_PlayerInfoReq:
+            //        {
+            //            C_PlayerInfoReq packet = new C_PlayerInfoReq();
+            //            packet.Read(buffer);
 
-            return;
+            //            foreach (Skill skill in packet.skills)
+            //            {
+            //                Console.WriteLine($"Skill ({skill.id})({skill.level})({skill.duration})");
+            //            }
+            //            Console.WriteLine($"PlayerInfoReq {{ {packet.playerId}, {packet.name} }}");
+            //        }
+            //        break;
+            //}
+
+            //return;
         }
 
         public override void OnSend(int numOfBytes)
