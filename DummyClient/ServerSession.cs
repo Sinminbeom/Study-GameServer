@@ -193,7 +193,6 @@ namespace DummyClient
 
         public override void OnRecvPacket(ArraySegment<byte> buffer)
         {
-
             PacketManager.Instance.OnRecvPacket(this, buffer);
             //ushort count = 0;
             //int dataSize = BitConverter.ToUInt16(buffer.Array, buffer.Offset);

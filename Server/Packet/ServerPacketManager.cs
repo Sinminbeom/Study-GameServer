@@ -34,15 +34,16 @@ class PacketManager
 
         Action<PacketSession, ArraySegment<byte>> action = null;
 		if (_onRecv.TryGetValue(id, out action))
-			action.Invoke(session, buffer);
+            action.Invoke(session, buffer);
 	}
 
 	void MakePacket<T>(PacketSession session, ArraySegment<byte> buffer) where T : IPacket, new()
 	{
-		T pkt = new T();
+        T pkt = new T();
 		pkt.Read(buffer);
 		Action<PacketSession, IPacket> action = null;
-		if (_handler.TryGetValue(pkt.Protocol, out action))
-			action.Invoke(session, pkt);
+
+        if (_handler.TryGetValue(pkt.Protocol, out action))
+            action.Invoke(session, pkt);
 	}
 }
