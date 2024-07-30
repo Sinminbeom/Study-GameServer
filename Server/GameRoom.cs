@@ -23,7 +23,6 @@ namespace Server
                 foreach (ClientSession _session in _sessions)
                     _session.Send(segment);
             }
-            return;
         }
         public void Enter(ClientSession session)
         {
