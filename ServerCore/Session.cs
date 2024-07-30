@@ -25,7 +25,7 @@ namespace ServerCore
                 ushort size = BitConverter.ToUInt16(buffer.Array, buffer.Offset);
                 if (buffer.Count < size)
                     break;
-                
+
                 OnRecvPacket(new ArraySegment<byte>(buffer.Array, buffer.Offset, size));
 
                 processLen += size;

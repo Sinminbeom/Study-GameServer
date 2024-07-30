@@ -10,6 +10,7 @@ namespace Server
     class Program
     {
         static Listener _listener = new Listener();
+        public static GameRoom Room = new GameRoom();
         static void OnAcceptHandler(Socket clientSocket)
         {
             try
@@ -22,7 +23,7 @@ namespace Server
 
                 Thread.Sleep(1000);
 
-                session.Disconnect();
+                //session.Disconnect();
                 session.Disconnect();
 
             }
@@ -33,8 +34,7 @@ namespace Server
         }
         static void Main(string[] args)
         {
-            PacketManager.Instance.Register();
-
+            //PacketManager.Instance.Register();
 
             // DNS (Domain Name System)
             string host = Dns.GetHostName();
@@ -43,7 +43,7 @@ namespace Server
             IPEndPoint endPoint = new IPEndPoint(ipAddr, 7777);
 
             // 문지기
-            _listener.Init(endPoint, () => { return new ClientSession(); });
+            _listener.Init(endPoint, () => { return SessionManager.Instance.Generator(); });
             Console.WriteLine("Listening...");
 
             while (true)

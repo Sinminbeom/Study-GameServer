@@ -5,7 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
-using static C_PlayerInfoReq;
+//using static C_PlayerInfoReq;
 
 namespace Server
 {
@@ -150,10 +150,15 @@ namespace Server
     */
     class ClientSession : PacketSession
     {
+
+        public int SessionId { get; set; }
+        public GameRoom Room { get; set; }
         public override void OnConnected(EndPoint endPoint)
         {
             Console.WriteLine($"OnConnected {endPoint}");
+            Program.Room.Enter(this);
 
+            /*
             C_PlayerInfoReq packet = new C_PlayerInfoReq() { playerId = 100, name = "minbeom" };
 
             packet.skills.Add(new Skill { id = 501, duration = 5.0f, level = 5 });
@@ -173,10 +178,17 @@ namespace Server
             Thread.Sleep(5000);
 
             Disconnect();
+            */
         }
 
         public override void OnDisconnected(EndPoint endPoint)
         {
+            SessionManager.Instance.Remove(this);
+            if (Room != null)
+            {
+                Room.Leave(this);
+                Room = null;
+            }
             Console.WriteLine($"OnDisconnected {endPoint}");
         }
 
