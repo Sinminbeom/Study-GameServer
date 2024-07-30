@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ServerCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,10 +7,21 @@ using System.Threading.Tasks;
 
 namespace Server
 {
-    class GameRoom
+    class GameRoom: IJobQueue
     {
         List<ClientSession> _sessions = new List<ClientSession>();
         object _lock = new object();
+        JobQueue _jobQueue = new JobQueue();
+
+        public Action Pop()
+        {
+            return null;
+        }
+
+        public void Push(Action job)
+        {
+            _jobQueue.Push(job);
+        }
 
         public void Broadcast(ClientSession session, string chat)
         {
@@ -40,5 +52,6 @@ namespace Server
                 _sessions.Remove(session);
             }
         }
+
     }
 }

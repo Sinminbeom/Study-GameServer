@@ -156,7 +156,10 @@ namespace Server
         public override void OnConnected(EndPoint endPoint)
         {
             Console.WriteLine($"OnConnected {endPoint}");
-            Program.Room.Enter(this);
+            Program.Room.Push(
+                () => Program.Room.Enter(this)
+            );
+            //Program.Room.Enter(this);
 
             /*
             C_PlayerInfoReq packet = new C_PlayerInfoReq() { playerId = 100, name = "minbeom" };
@@ -186,6 +189,9 @@ namespace Server
             SessionManager.Instance.Remove(this);
             if (Room != null)
             {
+                Program.Room.Push(
+                    () => Room.Leave(this)
+                );
                 Room.Leave(this);
                 Room = null;
             }
