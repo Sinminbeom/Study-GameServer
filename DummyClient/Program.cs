@@ -1,17 +1,18 @@
-﻿using System;
+﻿using ServerCore;
+using System;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
-using ServerCore;
+using System.Threading;
 
 namespace DummyClient
 {
+
+
     class Program
     {
         static void Main(string[] args)
         {
-            //PacketManager.Instance.Register();
-
             // DNS (Domain Name System)
             string host = Dns.GetHostName();
             IPHostEntry ipHost = Dns.GetHostEntry(host);
@@ -19,23 +20,24 @@ namespace DummyClient
             IPEndPoint endPoint = new IPEndPoint(ipAddr, 7777);
 
             Connector connector = new Connector();
-            connector.Connect(endPoint, () => { return SessionManager.Instance.Generator(); }, 100);
 
-            while(true)
+            connector.Connect(endPoint,
+                () => { return SessionManager.Instance.Generator(); },
+                100);
+
+            while (true)
             {
-
                 try
                 {
                     SessionManager.Instance.SendForEach();
                 }
-                catch (Exception ex)
+                catch (Exception e)
                 {
-                    Console.WriteLine(ex.ToString());
+                    Console.WriteLine(e.ToString());
                 }
 
                 Thread.Sleep(250);
             }
-
         }
     }
 }

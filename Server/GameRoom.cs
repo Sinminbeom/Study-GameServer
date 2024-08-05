@@ -7,27 +7,22 @@ using System.Threading.Tasks;
 
 namespace Server
 {
-    class GameRoom: IJobQueue
+    class GameRoom
     {
         List<ClientSession> _sessions = new List<ClientSession>();
         object _lock = new object();
-        JobQueue _jobQueue = new JobQueue();
+        //JobQueue _jobQueue = new JobQueue();
 
-        public Action Pop()
-        {
-            return null;
-        }
-
-        public void Push(Action job)
-        {
-            _jobQueue.Push(job);
-        }
+        //public void Push(Action job)
+        //{
+        //    _jobQueue.Push(job);
+        //}
 
         public void Broadcast(ClientSession session, string chat)
         {
             S_Chat packet = new S_Chat();
             packet.playerId = session.SessionId;
-            packet.chat = chat;
+            packet.chat = $"{chat} I am {packet.playerId}";
             ArraySegment<byte> segment = packet.Write();
 
             lock (_lock)
@@ -41,7 +36,7 @@ namespace Server
             lock (_lock)
             {
                 _sessions.Add(session);
-                session.Room = this;
+                session.Room = this; 
             }
         }
 

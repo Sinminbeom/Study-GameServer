@@ -19,10 +19,11 @@ class PacketHandler
         if (clientSession.Room == null)
             return;
 
-        clientSession.Room.Push(
-            () => clientSession.Room.Broadcast(clientSession, chatPacket.chat)
-        );
-        //clientSession.Room.Broadcast(clientSession, chatPacket.chat);
+        clientSession.Room.Broadcast(clientSession, chatPacket.chat);
+
+        //clientSession.Room.Push(
+        //    () => clientSession.Room.Broadcast(clientSession, chatPacket.chat)
+        //);
         //C_PlayerInfoReq p = packet as C_PlayerInfoReq;
 
         //Console.WriteLine($"PlayerInfoReq {{ {p.playerId}, {p.name} }}");
