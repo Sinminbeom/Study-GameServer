@@ -9,9 +9,8 @@ namespace ServerCore
     public interface IJobQueue
     {
         void Push(Action job);
-        Action Pop();
     }
-    public class JobQueue: IJobQueue
+    public class JobQueue : IJobQueue
     {
         Queue<Action> _jobQueue = new Queue<Action>();
         object _lock = new object();
@@ -22,7 +21,7 @@ namespace ServerCore
             {
                 if (_jobQueue.Count == 0)
                 {
-                    _flush = true;
+                    _flush = false;
                     return null;
                 }
 
