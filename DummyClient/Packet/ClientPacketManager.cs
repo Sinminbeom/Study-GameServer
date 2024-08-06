@@ -21,6 +21,7 @@ class PacketManager
 	{
 		_onRecv.Add((ushort)PacketID.S_Chat, MakePacket<S_Chat>);
 		_handler.Add((ushort)PacketID.S_Chat, PacketHandler.S_ChatHandler);
+
 	}
 
 	public void OnRecvPacket(PacketSession session, ArraySegment<byte> buffer)
@@ -31,8 +32,8 @@ class PacketManager
 		count += 2;
 		ushort id = BitConverter.ToUInt16(buffer.Array, buffer.Offset + count);
 		count += 2;
-        
-        Action<PacketSession, ArraySegment<byte>> action = null;
+
+		Action<PacketSession, ArraySegment<byte>> action = null;
 		if (_onRecv.TryGetValue(id, out action))
 			action.Invoke(session, buffer);
 	}
@@ -42,7 +43,7 @@ class PacketManager
 		T pkt = new T();
 		pkt.Read(buffer);
 		Action<PacketSession, IPacket> action = null;
-        if (_handler.TryGetValue(pkt.Protocol, out action))
+		if (_handler.TryGetValue(pkt.Protocol, out action))
 			action.Invoke(session, pkt);
 	}
 }
