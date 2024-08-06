@@ -5,7 +5,6 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
-//using static C_PlayerInfoReq;
 
 namespace Server
 {
@@ -20,8 +19,6 @@ namespace Server
             Program.Room.Push(
                 () => Program.Room.Enter(this)
             );
-            //Program.Room.Enter(this);
-
         }
 
         public override void OnDisconnected(EndPoint endPoint)
@@ -29,10 +26,8 @@ namespace Server
             SessionManager.Instance.Remove(this);
             if (Room != null)
             {
-                Room.Push(
-                    () => Room.Leave(this)
-                );
-                //Room.Leave(this);
+                GameRoom room = Room;
+                room.Push(() => room.Leave(this));
                 Room = null;
             }
             Console.WriteLine($"OnDisconnected {endPoint}");
