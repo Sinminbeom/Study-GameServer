@@ -9,7 +9,7 @@ class PacketManager
 	public static PacketManager Instance { get { return _instance; } }
 	#endregion
 
-	public PacketManager()
+	PacketManager()
 	{
 		Register();
 	}

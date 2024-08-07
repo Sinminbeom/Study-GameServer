@@ -1,59 +1,58 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace ServerCore
 {
-    public interface IJobQueue
-    {
-        void Push(Action job);
-    }
-    public class JobQueue : IJobQueue
-    {
-        Queue<Action> _jobQueue = new Queue<Action>();
-        object _lock = new object();
-        bool _flush = false;
-        public Action Pop()
-        {
-            lock (_lock)
-            {
-                if (_jobQueue.Count == 0)
-                {
-                    _flush = false;
-                    return null;
-                }
+	public interface IJobQueue
+	{
+		void Push(Action job);
+	}
 
-                return _jobQueue.Dequeue();
-            }
-        }
+	public class JobQueue : IJobQueue
+	{
+		Queue<Action> _jobQueue = new Queue<Action>();
+		object _lock = new object();
+		bool _flush = false;
 
-        public void Push(Action job)
-        {
-            bool flush = false;
+		public void Push(Action job)
+		{
+			bool flush = false;
 
-            lock (_lock)
-            {
-                _jobQueue.Enqueue(job);
-                if (_flush == false)
-                    _flush = flush = true;
-            }
+			lock (_lock)
+			{
+				_jobQueue.Enqueue(job);
+				if (_flush == false)
+					flush = _flush = true;
+			}
 
-            if (flush)
-                Flush();
-        }
+			if (flush)
+				Flush();
+		}
 
-        public void Flush()
-        {
-            while (true)
-            {
-                Action action = Pop();
-                if (action == null)
-                    return;
+		void Flush()
+		{
+			while (true)
+			{
+				Action action = Pop();
+				if (action == null)
+					return;
 
-                action.Invoke();
-            }
-        }
-    }
+				action.Invoke();
+			}
+		}
+
+		Action Pop()
+		{
+			lock (_lock)
+			{
+				if (_jobQueue.Count == 0)
+				{
+					_flush = false;
+					return null;
+				}
+				return _jobQueue.Dequeue();
+			}
+		}
+	}
 }

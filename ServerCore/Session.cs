@@ -199,8 +199,8 @@ namespace ServerCore
 			{
 				try
 				{
-					// Write 커서 이동
-					if (_recvBuffer.OnWrite(args.BytesTransferred) == false)
+                    // Write 커서 이동
+                    if (_recvBuffer.OnWrite(args.BytesTransferred) == false)
 					{
 						Disconnect();
 						return;
